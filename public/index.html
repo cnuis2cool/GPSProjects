@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>GPS</title>
+      <link href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="styles.css">
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+       <link rel="stylesheet" href="dist/MarkerCluster.css" />
+      <link rel="stylesheet" href="dist/MarkerCluster.Default.css" />
+      <script src="dist/MarkerCluster.js"></script>
+   </head>
+   <body>
+      <div id="map">
+      </div>
+      <script>
+// We’ll add a OSM tile layer to our map
+var osmUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+    osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    osm = L.tileLayer(osmUrl, {
+        maxZoom: 18,
+        attribution: osmAttrib
+    });
+
+
+// initialize the map on the "map" div with a given center and zoom
+var map = L.map('map').setView([25.92, 79.84], 5).addLayer(osm);
+
+var greenIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+var redIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+//US Public Saftey
+var obj = [
+["Place:Dupage  <br> Project: States Attorney Office export",41.868235,-88.068124],
+["Place:Dupage  <br> Project: Nowaris MugShot import",41.947953, -88.188287],
+["Place:Wayne  <br> Project: NYNIBRS",40.9253720,-74.276544],
+["Place:Colarado  <br> Project: CONIBRS",39.5500510,-105.7820670],
+["Place:Bell County  <br> Project: Texas UCR",31.1344110,-97.5247240],
+["Place:Louisville  <br> Project: eMissingPerson ",38.2526650,-85.7584560],
+["Place:Louisville  <br> Project: eCitation",38.035018, -85.909317],
+["Place:Louisville  <br> Project: eCrash",38.152418, -85.435646],
+["Place:Louisville  <br> Project: PersonnelImport",38.326066, -85.563424],
+["Place:Virginia  <br> Project: VIBRS",37.4315730,-78.6568940],
+["Place:Huntsville  <br> Project: HSVNIBRS",34.7303690,-86.5861040],
+["Place:ElkGrove  <br> Project: Informer_upgrade",38.443180, -121.315310],
+["Place:Flagstaff  <br> Project:Imageware MugShot import",35.232372, -111.696405],
+["Place:Flagstaff  <br> Project:LiveScan import",35.205956, -111.530692],
+["Place:Aurora <br> Project: 1Mage Export",41.7605850,-88.3200720],
+["Place:Aurora <br> Project: Active Directory Import ",41.754025, -88.249386],
+["Place:Des Moines  <br> Project: Informer_upgrade",41.6005450,-93.609106],
+["Place:Suffolk <br> Project: Informer_upgrade",36.7282050,-76.5835620],
+["Place:Madison  <br> Project: Informer_upgrade",43.0730520,-89.4012300],
+["Place:Tucson  <br> Project: Web Incident",32.2217430,-110.9264790],
+["Place:Arlington  <br> Project: Informer_upgrade",32.677263, -97.216782],
+["Place: Mountain View  <br> Project: Coplogic DORS Import,Evidence Import,File On Q import",37.3860520,-122.0838510],
+["Place:Fairfax  <br> Project: Brazos",38.859796, -77.328016],
+["Place:Fairfax  <br> Project: Civil Import",38.847096, -77.273857],
+["Place:Fairfax  <br> Project: Nowaris MugShot import",38.866680, -77.290938],
+["Place:Jefferson  <br> Project: Informer_upgrade",39.5800300,-105.2662930],
+["Place:Baltimore  <br> Project: Comstat Export",39.359001, -76.702051],
+["Place:Baltimore  <br> Project: ACRS ETIX Import",39.279369, -76.703265],
+["Place:Baltimore  <br> Project: RWOC export",39.239565, -76.583286],
+["Place:Baltimore  <br> Project: Juvenile Export,",39.330134, -76.537160],
+["Place:Baltimore  <br> Project: LIMS import",39.365053, -76.538617],
+["Place:Salt Lake city  <br> Project: Bair export",40.7607790,-111.8910470],
+["Place:San Antonio  <br> Project: Column export,",29.4241220,-98.493628],
+["Place:Calgary,Canada  <br> Project: EUCW",51.0486150,-114.0708460],
+["Place:Toranto  <br> Project: TPS",43.6532260,-79.383184],
+["Place:UK  <br> Project: FiReControl",51.5557740,-1.7797180],
+["Place:UK  <br> Project: UK FRC",53.10721669, -0.5932617],
+["Place:UK  <br> Project: NWP",53.0015622, -2.548828],
+["Place:UK  <br> Project: RAC",53.17311920, -1.49414062],
+["Place:Vienna,Austria  <br> Project: EUCW",47.5162310,14.5500720],
+["Place:Austria  <br> Project: CADP",48.096938, 13.618518],
+["Place:Austria  <br> Project: IPR",47.281989, 11.848906],
+["Place:Munich,Germany  <br> Project: EUCW",51.1656910,10.4515260],
+["Place:Bucharest,Romania  <br> Project: Border Guard",44.426767,26.1025380],
+["Place:Belgium  <br> Project: ASTRID",50.5038870,4.4699360],
+["Place:Denmark  <br> Project: Danish Ambulance",56.2639200,9.5017850],
+["Place:Rome, Italy  <br> Project: Zubair",41.903438, 12.603487],
+["Place:France  <br> Project: Mobile Antares",46.2276380,2.2137490],
+["Place:Mecca  <br> Project: MOI",21.3890820,39.857912],
+["Place:Madhya Pradesh <br> Project: MP dial 100 ",22.973423,78.656894],
+["Place:Uttar Pradesh  <br> Project:UP 100",26.8467090,80.9461590],
+["Place:Rajasthan  <br> Project: Rajasthan Police",27.0238040,74.2179330],
+["Place:Darwin <br> Project: NTPW",-12.459654, 130.825585],
+["Place:Darwin <br> Project: NTP FES",-12.465311, 130.850647],
+["Place:Melbourne <br> Project: SACAD",-37.774208, 144.814971],
+["Place:Adelaide <br> Project: ACC",-34.915574, 138.612871],
+["Place:Adelaide <br> Project: SAPN",-34.89268, 138.506011],
+["Place:Melbourne <br> Project: ESTA",-37.772037, 145.125335],
+["Place:Melbourne <br> Project: RACV",-38.022003, 145.150972],
+["Place:Canberra <br> Project: AFP",-35.281094, 149.126796],
+["Place:Christchurch  <br> Project: NZ PS & FS",-43.53210,172.63620],
+["Place:Wellington  <br> Project: NZ PS & FS",-41.28650,174.77620],
+["Place:Qingdao, China  <br> Project: Joint Solution",36.06710,120.38260],
+["Place:Tasmania  <br> Project: TAS Networks",-41.640079,146.315918],
+["Place:Manila,Philippines  <br> Project:PureForce",14.5995,120.9842],
+["Place:Switzerland  <br> Project:Convergence (IOT)",46.8182,8.2275],
+["Place:Switzerland  <br> Project: EUCW",46.942400, 9.378449],
+["Place:Malayasia <br> Project:EUCW",4.2105,101.9758],
+["Place:Jakarta, Indonesia  <br> Project:BNPB (JS)",-6.175372,106.8650],
+["Place:Cochabamba, Bolivia  <br> Project:Joint Solution",-17.413977, -66.1653],
+["Place:Barcelona, Spain  <br> Project:EUCW",41.3851,2.1734]
+];
+
+var obj2=[
+["Place:Singapore <br> Project:Singtel",1.338697, 103.868924],
+["Place:kuala lumpur,Malaysia<br>Project:Telekom Malaysia",3.138474, 101.686724],
+["Place:Hong Kong,Hong Kong <br>Hon Kong Electric",22.3964280,114.1094970],
+["Place:Kolkata,India<br> Project:CESC", 22.5726460,88.3638950  ],
+["Place:Huntingdon,UK<br> Project:Anglian Water",52.3314600,-0.1825520],
+["Place:Exeter EX2 7HR,UK<br> Project:South West Water",50.7164770,-3.4822510],
+["Place:London,UK<br> Project:Virgin Media",51.5073510,-0.1277580],
+["Place:Dublin,Ireland<br> Project:Fingal County Council",53.3498050,-6.2603100],
+["Place:Dublin,Ireland <br>Project:,Irish Electric",53.3498050,-6.2603100],
+["Place:The Hague,Netherlands<br> Project:Dutch KPN",52.0704980,4.3007000],
+["Place:Groningen,Netherlands <br>Project:Dutch Gasunie",53.2193840,6.5665020],
+["Place:Brussels,Belgium <br>Project:Proximus",50.855567, 4.077446],
+["Place:Brussels,Belgium<br> Project:Fluxys",50.811153, 4.377105],
+["Place:Rome,Italy <br>Project:Telecom Italia",41.9027840,12.4963660],
+["Place:Lisbon,Portugal <br>Project:Vodafone (Fiber Optic Works)",38.7222520,-9.1393370],
+["Place:,Portugal <br>Project:Ren (Fiber Optic Works)",40.918116, -8.375798],
+["Place:Bilbao,Spain <br>Project:Iberdrola",43.2630130,-2.9349850],
+["Place:Ho Chi Minh,Vietnam<br> Project:Ho Chi Minh City Electricity Company",10.8230990,106.6296640],
+["Place:Aarhus V,Denmark <br>Project:AffaldVarme Århus",56.1629390,10.2039210],
+["Place:Viby,Denmark <br>Project:Århus Vand",56.1206380,10.1463790],
+["Place:Fredensborg,Denmark<br> Project:Fredensborg Forsyning",55.9746840,12.4058350],
+["Place:Frederiksberg,Denmark<br> Project:Frederiksberg Forsyning",55.9746840,12.4058350],
+["Place:Frederikshavn,Denmark<br> Project:Frederikshavn Forsyning",55.9746840,12.4058350],
+["Place:Horsens,Denmark<br> Project:Fjernvarme Horsens",55.8581300,9.8475880],
+["Place:København S,Denmark<br> Project:HOFOR",55.6760970,12.5683370],
+["Place:Kastrup,Denmark<br> Project:Københavns Lufthavne",55.600305, 12.613835],
+["Place:Nakskov,Denmark<br> Project:Lolland Forsyning",54.8334060,11.1437240],
+["Place:Nyborg,Denmark<br> Project:Nyborg Forsyning",55.3241690,10.7995610],
+["Place:Ringsted,Denmark <br>Project:Ringsted Forsyning",55.4429520,11.7913720],
+["Place:Korsør,Denmark <br>Project:SK Forsyning",55.3257630,11.1493900],
+["Place:Rønne,Denmark <br>Project:Bornholms Energi & Forsyning",55.1010170,14.7083290],
+["Place:Essen, Germany<br> Project:Germany,RWW",51.4556430,7.0115550],
+["Place:Essen, Germany <br>Project:Kelag",51.4556430,7.0115550],
+["Place:Carinthia, Austria<br> Project:Stadtwerke Bayreuth Energie",46.7222030,14.1805880],
+["Place:Bayreuth,Germany <br>Project:WEMAG",49.9456400,11.5713350],
+["Place:Schwerin,Germany <br>Project:Envia Mitteldeutsche Energie AG",53.6355020,11.4012500],
+["Place:Chemnitz,Germany<br> Project:Stadtwerke Waren",50.8278450,12.9213700],
+["Place:Waren,Germany <br>Project:PleDoc",53.5161670,12.6818560],
+["Place:Essen,Germany <br>Project:Thuringer Energie AG",51.4556430,7.0115550],
+["Place:Neuhaus am Rennweg,Germany<br> Project:OVAG",50.5058990,11.1422980],
+["Place:Friedberg,Germany<br> Project:Albwerk",50.3248930,8.7408700],
+["Place:Geislingen an der Steige,Germany <br> Project: E.ON Mitte",48.6215160,9.8294480],
+["Place:Sacramento, California,USA<br> Project:SMUD",38.613313, -121.494756],
+["Place:Dallas ,Texas,USA<br> Project:AT&T",32.774989, -96.679365],
+["Place:Dallas ,Texas,USA<br> Project:Oncor",32.7766640,-96.7969880],
+["Place:Little Rock, Arkansas,USA<br> Project:Windstream",34.7464810,-92.2895950],
+["Place:Madison, Wisconsin,USA<br> Project:Madison Gas & Electric",43.0730520,-89.4012300],
+["Place:4 Irving Place, New York City,USA<br> Project:Coned",40.7340650,-73.9878830],
+["Place:Indianapolis, Indiana,USA<br> Project:Indianapolis Power & Light",39.7684030,-86.1580680],
+["Place:Chattanooga,USA <br>Project:EPB",35.0456300,-85.3096800],
+["Place:Tampa, Florida,USA<br> Project:TECO",27.9505750,-82.4571780],
+["Place:Hawaii,USA<br> Project:Hawaii Electric Co.",19.8967660,-155.5827820],
+["Place: North Carolina,USA <br>Project:PECO",35.7595730,-79.0193000],
+["Place:Newmarket, Auckland,New ZeaLand<br> Project:Vector Gas",-36.8698370,174.7775800],
+["Place:New Plymouth,New ZeaLand <br>Project:Horizon Energy",-39.0556250,174.0752280],
+["Place:Palmerston North 4442,New ZeaLand<br> Project:Enable Fiber Optic works",-40.3523060,175.6082150],
+["Place:Melbourne, Victoria,Australia <br> Project:South East Water",-37.8136280,144.9630580],
+["Place:Mitcham,Australia <br> Project:Yara Valley Water",-37.816406, 145.198356],
+["Place:Huntingwood,Australia <br>Project:Integral Energy",-33.7990000,150.8850000],
+["Place:Mississauga,Ontario,Canada <br> Project:Horizon Utilities",51.2537750,-85.3232140],
+["Place:St. John's, Newfoundland and Labrador,Canada<br> Project: Fortis Inc.",47.5615100,-52.7125770],
+["Place:Mississauga, Ontario,Canada <br> Project: Alliance Corporation",52.382172, -84.422332]
+];
+var markerClusters = new L.markerClusterGroup();
+var i;
+for(i=0; i<obj.length; i++)
+{
+var m1 =  L.marker([obj[i][1],obj[i][2]], {icon: greenIcon}).bindPopup(obj[i][0]);
+  markerClusters.addLayer( m1 );
+  //m1.addTo(map);
+}
+//map.addLayer(markerClusters);
+var j;
+for(j=0; j<obj2.length; j++)
+{
+var m2 =  L.marker([obj2[j][1],obj2[j][2]], {icon: redIcon}).bindPopup(obj2[j][0]);
+ markerClusters.addLayer( m2 );
+ //m2.addTo(map);
+}
+
+map.addLayer(markerClusters);
+
+map.on('click', function(e){
+console.log(e.latlng.lat + ', ' + e.latlng.lng);
+});
+         
+      </script>
+   </body>
+</html>
